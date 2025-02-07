@@ -2,9 +2,10 @@
 
 import { useChat } from 'ai/react';
 import { AudioPlayer } from './components/audio-player';
+import { AudioRecorder } from './components/audio-recorder';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+  const { messages, input, setInput, append, handleInputChange, handleSubmit, isLoading } = useChat();
   const lastCompletedAssistantMessage = isLoading ? null : messages.filter(m => m.role === 'assistant').at(-1)
 
   return (
@@ -27,6 +28,7 @@ export default function Chat() {
           onChange={handleInputChange}
         />
       </form>
+      <AudioRecorder input={input} setInput={setInput} append={append} />
     </div>
   );
 }
