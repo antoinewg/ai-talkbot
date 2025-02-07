@@ -1,31 +1,33 @@
 import { DeepgramError, createClient } from "@deepgram/sdk";
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export const revalidate = 0;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-export async function GET(request: NextRequest) {
   // exit early so we don't request keys while in devmode
   if (process.env.DEEPGRAM_ENV === "development") {
-    return NextResponse.json({
+    return res.json({
       key: process.env.DEEPGRAM_API_KEY ?? "",
     });
   }
 
   // use the request object to invalidate the cache every request
-  const url = request.url;
+  const url = req.url;
   const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
 
   let { result: projectsResult, error: projectsError } =
     await deepgram.manage.getProjects();
 
   if (projectsError) {
-    return NextResponse.json(projectsError);
+    return res.json(projectsError);
   }
 
   const project = projectsResult?.projects[0];
 
   if (!project) {
-    return NextResponse.json(
+    return res.json(
       new DeepgramError(
         "Cannot find a Deepgram project. Please create a project first."
       )
@@ -41,16 +43,15 @@ export async function GET(request: NextRequest) {
     });
 
   if (newKeyError) {
-    return NextResponse.json(newKeyError);
+    return res.json(newKeyError);
   }
 
-  const response = NextResponse.json({ ...newKeyResult, url });
-  response.headers.set("Surrogate-Control", "no-store");
-  response.headers.set(
+  res.setHeader("Surrogate-Control", "no-store");
+  res.setHeader(
     "Cache-Control",
     "s-maxage=0, no-store, no-cache, must-revalidate, proxy-revalidate"
   );
-  response.headers.set("Expires", "0");
+  res.setHeader("Expires", "0");
 
-  return response;
+  return res.json({ ...newKeyResult, url });
 }
