@@ -28,7 +28,7 @@ export default function Chat() {
           onChange={handleInputChange}
         />
       </form>
-      <AudioRecorder input={input} setInput={setInput} append={append} />
+      <AudioRecorder setInput={setInput} append={append} />
     </div>
   );
 }

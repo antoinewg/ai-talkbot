@@ -15,9 +15,9 @@ import {
 import { Visualizer } from "./visualizer";
 import { useChat } from "ai/react";
 
-type Props = Pick<ReturnType<typeof useChat>, "input" | "setInput" | "append">;
+type Props = Pick<ReturnType<typeof useChat>, "setInput" | "append">;
 
-export const AudioRecorder = ({ input, setInput, append }: Props) => {
+export const AudioRecorder = ({ setInput, append }: Props) => {
   const { connection, connectToDeepgram, socketState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } = useMicrophone();
   const captionTimeout = useRef<NodeJS.Timeout | null>(null);

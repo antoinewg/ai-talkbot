@@ -67,9 +67,8 @@ const MicrophoneContextProvider: React.FC<MicrophoneContextProviderProps> = ({
 
       setMicrophoneState(MicrophoneState.Ready);
       setMicrophone(microphone);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-
       throw err;
     }
   };
