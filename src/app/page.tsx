@@ -1,9 +1,12 @@
 'use client';
 
 import { useChat } from 'ai/react';
+import { AudioPlayer } from './components/audio-player';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+  const lastCompletedAssistantMessage = isLoading ? null : messages.filter(m => m.role === 'assistant').at(-1)
+
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       {messages.map(m => (
@@ -12,6 +15,9 @@ export default function Chat() {
           {m.content}
         </div>
       ))}
+
+      {/* auto play the last message */}
+      {lastCompletedAssistantMessage && <AudioPlayer text={lastCompletedAssistantMessage.content} />  }
 
       <form onSubmit={handleSubmit}>
         <input

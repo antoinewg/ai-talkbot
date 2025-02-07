@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { createAudioStreamFromText } from "./createAudioStreamFromText";
 
 const headers = new Headers({
@@ -5,7 +6,7 @@ const headers = new Headers({
   "Transfer-Encoding": "chunked",
 });
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const text = searchParams.get("text");
 
