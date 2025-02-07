@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   SOCKET_STATES,
   LiveTranscriptionEvent,
@@ -55,17 +55,15 @@ export const AudioRecorder = ({ input, setInput, append }: Props) => {
 
     const onTranscript = (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
-      let thisCaption = data.channel.alternatives[0].transcript;
+      const transcript = data.channel.alternatives[0].transcript;
 
-      console.log("thisCaption", thisCaption);
-      if (thisCaption !== "") {
-        console.log('thisCaption !== ""', thisCaption);
-        setInput(thisCaption);
+      if (transcript !== "") {
+        setInput(transcript);
       }
 
       if (isFinal && speechFinal) {
-        if (thisCaption !== "") {
-          append({ role: "user", content: thisCaption });
+        if (transcript !== "") {
+          append({ role: "user", content: transcript });
           setInput("");
         }
         if (captionTimeout.current) {

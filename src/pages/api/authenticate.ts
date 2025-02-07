@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const url = req.url;
   const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
 
-  let { result: projectsResult, error: projectsError } =
+  const { result: projectsResult, error: projectsError } =
     await deepgram.manage.getProjects();
 
   if (projectsError) {
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     );
   }
 
-  let { result: newKeyResult, error: newKeyError } =
+  const { result: newKeyResult, error: newKeyError } =
     await deepgram.manage.createProjectKey(project.project_id, {
       comment: "Temporary API key",
       scopes: ["usage:write"],
