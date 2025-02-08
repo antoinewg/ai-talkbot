@@ -11,7 +11,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^1.1.9",
     "@deepgram/sdk": "^3.10.1",
-    "ai": "^4.1.24",
+    "ai": "^4.1.25",
     "elevenlabs": "^1.50.5",
     "framer-motion": "^12.4.1",
     "next": "15.1.6",
