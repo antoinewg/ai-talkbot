@@ -15,13 +15,20 @@ import {
 import { Visualizer } from "./visualizer";
 import { useChat } from "ai/react";
 
-type Props = Pick<ReturnType<typeof useChat>, "setInput" | "append">;
+type Props = Pick<ReturnType<typeof useChat>, "append" | "setInput">;
 
 export const AudioRecorder = ({ setInput, append }: Props) => {
   const { connection, connectToDeepgram, socketState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } = useMicrophone();
   const captionTimeout = useRef<NodeJS.Timeout | null>(null);
   const keepAliveInterval = useRef<NodeJS.Timeout | null>(null);
+  const partialResults = useRef<string[]>([]);
+
+  const setPartialInput = (msg: string) => setInput(msg);
+  const sendMessage = (msg: string) => {
+    append({ role: 'user', content: msg })
+    setInput("")
+  };
 
   useEffect(() => {
     setupMicrophone();
@@ -30,13 +37,7 @@ export const AudioRecorder = ({ setInput, append }: Props) => {
 
   useEffect(() => {
     if (microphoneState === MicrophoneState.Ready) {
-      connectToDeepgram({
-        model: "nova-3",
-        interim_results: true,
-        smart_format: true,
-        filler_words: true,
-        utterance_end_ms: 3000,
-      });
+      connectToDeepgram({ model: "nova-3", endpointing: 500 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [microphoneState]);
@@ -56,25 +57,18 @@ export const AudioRecorder = ({ setInput, append }: Props) => {
     const onTranscript = (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
       const transcript = data.channel.alternatives[0].transcript;
+      if (!isFinal) return
 
       if (transcript !== "") {
-        setInput(transcript);
-      }
+        partialResults.current.push(transcript)
+        const msg = partialResults.current.join(" ");
+        if (msg !== "") setPartialInput(msg)
+      };
 
-      if (isFinal && speechFinal) {
-        if (transcript !== "") {
-          append({ role: "user", content: transcript });
-          setInput("");
-        }
-        if (captionTimeout.current) {
-          clearTimeout(captionTimeout.current);
-        }
-        captionTimeout.current = setTimeout(() => {
-          setInput("");
-          if (captionTimeout.current) {
-            clearTimeout(captionTimeout.current);
-          }
-        }, 3000);
+      if (speechFinal) {
+        const msg = partialResults.current.join(" ");
+        if (msg !== "") sendMessage(msg)
+        partialResults.current = [];
       }
     };
 
