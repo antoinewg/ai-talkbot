@@ -13,6 +13,7 @@
     "@deepgram/sdk": "^3.10.1",
     "ai": "^4.1.24",
     "elevenlabs": "^1.50.5",
+    "framer-motion": "^12.4.1",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
