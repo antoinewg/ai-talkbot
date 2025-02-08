@@ -10,12 +10,23 @@ export default function Chat() {
   const lastCompletedAssistantMessage = isLoading ? null : messages.filter((m) => m.role === "assistant").at(-1);
 
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch gap-2">
       {messages.map((m) => (
-        <div key={m.id} className="whitespace-pre-wrap">
-          {m.role === "user" ? "User: " : "AI: "}
-          {m.content}
-        </div>
+        <motion.div
+          key={m.id}
+          initial={{ opacity: 0, x: m.role === "user" ? 20 : -20, y: 10 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className={`flex items-start gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}
+        >
+          <div
+            className={`${
+              m.role === "user" ? "bg-[#228BE6] text-white" : "bg-[#F1F3F5] text-[#1A1B1E]"
+            } px-4 py-2 rounded-3xl max-w-[70%]`}
+          >
+            {m.content}
+          </div>
+        </motion.div>
       ))}
 
       {/* auto play the last message */}
