@@ -1,15 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
-const interpolateColor = (
-  startColor: number[],
-  endColor: number[],
-  factor: number
-): number[] => {
+const interpolateColor = (startColor: number[], endColor: number[], factor: number): number[] => {
   const result = [];
   for (let i = 0; i < startColor.length; i++) {
-    result[i] = Math.round(
-      startColor[i] + factor * (endColor[i] - startColor[i])
-    );
+    result[i] = Math.round(startColor[i] + factor * (endColor[i] - startColor[i]));
   }
   return result;
 };

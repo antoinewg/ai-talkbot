@@ -3,17 +3,13 @@
 import { useEffect, useRef } from "react";
 import {
   SOCKET_STATES,
-  LiveTranscriptionEvent,
+  type LiveTranscriptionEvent,
   LiveTranscriptionEvents,
   useDeepgram,
 } from "../context/DeepgramContextProvider";
-import {
-  MicrophoneEvents,
-  MicrophoneState,
-  useMicrophone,
-} from "../context/MicrophoneContextProvider";
+import { MicrophoneEvents, MicrophoneState, useMicrophone } from "../context/MicrophoneContextProvider";
 import { Visualizer } from "./visualizer";
-import { useChat } from "ai/react";
+import type { useChat } from "ai/react";
 
 type Props = Pick<ReturnType<typeof useChat>, "append" | "setInput">;
 
@@ -26,8 +22,8 @@ export const AudioRecorder = ({ setInput, append }: Props) => {
 
   const setPartialInput = (msg: string) => setInput(msg);
   const sendMessage = (msg: string) => {
-    append({ role: 'user', content: msg })
-    setInput("")
+    append({ role: "user", content: msg });
+    setInput("");
   };
 
   useEffect(() => {
@@ -48,7 +44,7 @@ export const AudioRecorder = ({ setInput, append }: Props) => {
 
     const onData = (e: BlobEvent) => {
       // iOS SAFARI FIX:
-      // Prevent packetZero from being sent. If sent at size 0, the connection will close. 
+      // Prevent packetZero from being sent. If sent at size 0, the connection will close.
       if (e.data.size > 0) {
         connection?.send(e.data);
       }
@@ -57,17 +53,17 @@ export const AudioRecorder = ({ setInput, append }: Props) => {
     const onTranscript = (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
       const transcript = data.channel.alternatives[0].transcript;
-      if (!isFinal) return
+      if (!isFinal) return;
 
       if (transcript !== "") {
-        partialResults.current.push(transcript)
+        partialResults.current.push(transcript);
         const msg = partialResults.current.join(" ");
-        if (msg !== "") setPartialInput(msg)
-      };
+        if (msg !== "") setPartialInput(msg);
+      }
 
       if (speechFinal) {
         const msg = partialResults.current.join(" ");
-        if (msg !== "") sendMessage(msg)
+        if (msg !== "") sendMessage(msg);
         partialResults.current = [];
       }
     };
@@ -113,9 +109,5 @@ export const AudioRecorder = ({ setInput, append }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [microphoneState, socketState]);
 
-  return (
-    <>
-      {microphone && <Visualizer microphone={microphone} />}
-    </>
-  );
+  return <>{microphone && <Visualizer microphone={microphone} />}</>;
 };

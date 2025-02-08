@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { createAudioStreamFromText } from "./createAudioStreamFromText";
 
 const headers = new Headers({

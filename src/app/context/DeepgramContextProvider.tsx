@@ -2,20 +2,14 @@
 
 import {
   createClient,
-  LiveClient,
+  type LiveClient,
   SOCKET_STATES,
   LiveTranscriptionEvents,
   type LiveSchema,
   type LiveTranscriptionEvent,
 } from "@deepgram/sdk";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  FunctionComponent,
-} from "react";
+import { createContext, useContext, useState, type ReactNode, type FunctionComponent } from "react";
 
 interface DeepgramContextType {
   connection: LiveClient | null;
@@ -24,9 +18,7 @@ interface DeepgramContextType {
   socketState: SOCKET_STATES;
 }
 
-const DeepgramContext = createContext<DeepgramContextType | undefined>(
-  undefined
-);
+const DeepgramContext = createContext<DeepgramContextType | undefined>(undefined);
 
 interface DeepgramContextProviderProps {
   children: ReactNode;
@@ -38,9 +30,7 @@ const getApiKey = async (): Promise<string> => {
   return result.key;
 };
 
-const DeepgramContextProvider: FunctionComponent<
-  DeepgramContextProviderProps
-> = ({ children }) => {
+const DeepgramContextProvider: FunctionComponent<DeepgramContextProviderProps> = ({ children }) => {
   const [connection, setConnection] = useState<LiveClient | null>(null);
   const [socketState, setSocketState] = useState<SOCKET_STATES>(SOCKET_STATES.closed);
 
@@ -92,17 +82,9 @@ const DeepgramContextProvider: FunctionComponent<
 function useDeepgram(): DeepgramContextType {
   const context = useContext(DeepgramContext);
   if (context === undefined) {
-    throw new Error(
-      "useDeepgram must be used within a DeepgramContextProvider"
-    );
+    throw new Error("useDeepgram must be used within a DeepgramContextProvider");
   }
   return context;
 }
 
-export {
-  DeepgramContextProvider,
-  useDeepgram,
-  SOCKET_STATES,
-  LiveTranscriptionEvents,
-  type LiveTranscriptionEvent,
-};
+export { DeepgramContextProvider, useDeepgram, SOCKET_STATES, LiveTranscriptionEvents, type LiveTranscriptionEvent };
